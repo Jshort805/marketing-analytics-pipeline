@@ -2,7 +2,7 @@
 
 An end to end marketing analytics project built with dbt, DuckDB, and Airflow. It covers three connected pieces that usually get treated as separate projects: multi touch attribution (MTA), customer lifetime value (LTV), and marketing mix modeling (MMM).
 
-Most attribution projects stop at "which channel gets credit for this sale." This one goes further on purpose. MTA tells you which touchpoint drove a specific sale. LTV tells you whether the customers a channel brings in are actually worth acquiring over time. MMM tells you how much to spend on each channel without needing any tracking at all. Put together, they let you answer a much better question than any one of them alone: how should I actually allocate budget across channels.
+MTA tells you which touchpoint drove a specific sale. LTV tells you whether the customers a channel brings in are actually worth acquiring over time. MMM tells you how much to spend on each channel without needing any tracking at all. Put together, they let you answer a much better question than any one of them alone: how should I actually allocate budget across channels.
 
 ## Why three methods instead of one
 
