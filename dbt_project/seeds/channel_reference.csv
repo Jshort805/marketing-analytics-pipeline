@@ -1,0 +1,10 @@
+channel,channel_type,is_paid,platform
+google_search,paid_search,true,Google Ads
+meta_facebook,paid_social,true,Meta Ads
+meta_instagram,paid_social,true,Meta Ads
+tiktok_ads,paid_social,true,TikTok Ads
+display_network,paid_display,true,Google Display Network
+affiliate,affiliate,true,Affiliate Network
+email,email,false,Email (ESP)
+organic_search,organic,false,Organic Search
+direct,direct,false,Direct / Type-in
