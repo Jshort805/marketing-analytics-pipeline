@@ -1,6 +1,6 @@
 # Marketing Analytics Pipeline
 
-An end to end marketing analytics project built with dbt, DuckDB, and Airflow. It covers three connected pieces that usually get treated as separate projects: multi touch attribution (MTA), customer lifetime value (LTV), and marketing mix modeling (MMM).
+An end to end marketing analytics project built with dbt, DuckDB, and Airflow. It covers: multi touch attribution (MTA), customer lifetime value (LTV), and marketing mix modeling (MMM).
 
 MTA tells you which touchpoint drove a specific sale. LTV tells you whether the customers a channel brings in are actually worth acquiring over time. MMM tells you how much to spend on each channel without needing any tracking at all. Put together, they let you answer a much better question than any one of them alone: how should I actually allocate budget across channels.
 
