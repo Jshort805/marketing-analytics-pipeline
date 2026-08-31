@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: campaigns
+      - name: ad_spend
+      - name: clicks
+      - name: customers
+      - name: orders
