@@ -1,5 +1,3 @@
-# marketing-analytics-pipeline
-
 # Marketing Analytics Pipeline
 
 An end to end marketing analytics project built with dbt, DuckDB, and Airflow. It covers three connected pieces that usually get treated as separate projects: multi touch attribution (MTA), customer lifetime value (LTV), and marketing mix modeling (MMM).
@@ -8,19 +6,17 @@ Most attribution projects stop at "which channel gets credit for this sale." Thi
 
 ## Why three methods instead of one
 
-Each method sees something the others cant.
+MTA needs a tracked touchpoint to give credit. It can't see revenue from a returning customer who just typed the site into their browser, no click involved. In this project repeat orders show a 74.5% "dark" rate (no tracked touchpoint at all) compared to 13.3% for first time orders; it's not a bug it's a limitaion of multi touch attribution that is inherent to the model.
 
-MTA needs a tracked touchpoint to give credit. It cannot see revenue from a returning customer who just typed the site into their browser, no click involved. In this project, repeat orders show a 74.5% "dark" rate (no tracked touchpoint at all) compared to 13.3% for first time orders, which is a real limitation of MTA, not a bug in the data.
+LTV fixes part of that gap by asking a different question: not "who gets credit for this sale" but "is this customer worth having." It can evaluate every channel, including unpaid ones like organic search, direct, and email, which MTA and MMM structurally cannot rank at all since ROAS is undefined when spend is zero.
 
-LTV fixes part of that gap by asking a different question entirely: not "who gets credit for this sale" but "is this customer worth having." It can evaluate every channel, including unpaid ones like organic search, direct, and email, which MTA and MMM structurally cannot rank at all since ROAS is undefined when spend is zero.
+MMM is aggregate and top down. It does not need any tracking, just weekly spend and weekly revenue, and it accounts for two things MTA ignores: adstock (an ad's effect lingers past the week it ran) and saturation (the first dollar spent on a channel does more than the thousandth).
 
-MMM is aggregate and top down. It does not need any tracking, just weekly spend and weekly revenue, and it accounts for two things MTA ignores completely: adstock (an ad's effect lingers past the week it ran) and saturation (the first dollar spent on a channel does more than the thousandth).
-
-Where all three actually land on this data: paid social (Meta, TikTok) and display come out looking strong under MTA, LTV, and MMM. Google search and affiliate look weaker across MTA and MMM, but LTV shows google search bringing in more durable customers than affiliate despite affiliate's better short term ROAS. That's the kind of thing you'd only catch by using more than one lens.
+Where all three actually land: paid social (Meta, TikTok) and display come out looking strong under MTA, LTV, and MMM. Google search and affiliate look weaker across MTA and MMM, but LTV shows google search bringing in more durable customers than affiliate despite affiliate's better short term ROAS.
 
 ## Stack
 
-- dbt + DuckDB for transformation, tests, and the warehouse itself
+- dbt + DuckDB for transformation, tests, and the warehouse
 - Airflow for orchestration, in its own isolated virtualenv, kept separate from the dbt/data science stack to avoid dependency conflicts
 - Python (pandas, lifetimes, scikit-learn, matplotlib) for the LTV and MMM analysis notebooks
 
@@ -46,23 +42,21 @@ Where all three actually land on this data: paid social (Meta, TikTok) and displ
 
 ## How the pipeline works
 
-1. scripts/generate_data.py creates synthetic customers, clicks, campaigns, ad spend, and orders across a 24 month window, with a hidden active/dormant customer state driving repeat purchases. That's the same generative assumption BG/NBD makes when fitting real data.
-2. scripts/load_raw.py loads the raw CSVs into a raw schema in DuckDB, untouched, standing in for a real EL tool like Fivetran.
-3. dbt staging models clean and standardize each source.
-4. dbt intermediate models build multi touch attribution: every order joined to its touchpoints within a lookback window, weighted under first touch, last touch, and linear credit.
-5. dbt marts dollarize that attribution and roll it up into channel level ROAS, CAC, CTR, and CPC.
+1. scripts/generate_data.py creates synthetic customers, clicks, campaigns, ad spend, and orders across a 24 month window, with a hidden active/dormant customer state driving repeat purchases
+2. scripts/load_raw.py loads the raw CSVs into a raw schema in DuckDB
+3. dbt staging models clean and standardize each source
+4. dbt intermediate models build multi touch attribution: every order joined to its touchpoints within a lookback window, weighted under first touch, last touch, and linear credit
+5. dbt marts dollarize that attribution and roll it up into channel level ROAS, CAC, CTR, and CPC
 6. dbt tests (schema tests plus two singular business rule tests) validate invariants like "attribution weights always sum to 1.0" and "no orders lost or duplicated."
-7. Airflow orchestrates the whole thing: generate data, load raw, dbt build, generate docs.
-8. Two Jupyter notebooks build LTV: a descriptive cohort analysis, then a predictive BG/NBD and Gamma-Gamma model producing a 12 month forward LTV per customer.
-9. A third notebook builds a simple MMM: weekly spend by channel, adstock and saturation transforms, then a regression against weekly revenue.
+7. Airflow orchestrates the workflow: generate data, load raw, dbt build, generate docs
+8. Two Jupyter notebooks build LTV: a descriptive cohort analysis, then a predictive BG/NBD and Gamma-Gamma model producing a 12 month forward LTV per customer
+9. A third notebook builds a simple MMM: weekly spend by channel, adstock and saturation transforms, then a regression against weekly revenue
 
-## Known limitations (stated on purpose, not hidden)
+## Known limitations
 
-Touchpoints are only generated during a customer's initial acquisition journey in the synthetic data, so repeat orders have a much higher dark rate than first time orders. This is realistic (MTA genuinely cannot see brand recall or direct navigation) but it is worth knowing it comes from the generator.
+Touchpoints are only generated during a customer's initial acquisition journey in the synthetic data, so repeat orders have a much higher dark rate than first time orders. This is realistic (MTA genuinely can't see brand recall or direct navigation) but it comes from the same generator.
 
-The MMM only has about 20 weeks of data. MMM models typically want 100+ weeks to stabilize, so treat the implied ROI numbers as directional, not precise.
-
-MMM implied ROAS numbers are not on the same scale as MTA ROAS since they're computed off transformed spend, not raw spend. Useful for ranking channels against each other, not for a direct dollar for dollar comparison against the MTA numbers.
+MMM implied ROAS numbers are not on the same scale as MTA ROAS since they're computed off transformed spend, not raw spend. 
 
 ## Running it locally
 
@@ -71,4 +65,4 @@ MMM implied ROAS numbers are not on the same scale as MTA ROAS since they're com
     cd dbt_project && dbt deps && dbt build
     cd ../airflow && airflow dags test marketing_pipeline your_date_here
 
-Then open the notebooks in analysis/ with the .venv kernel.
+Then open the notebooks in analysis/ with the .venv kernel
