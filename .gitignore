@@ -6,3 +6,9 @@ __pycache__/
 # generated data — regenerate with scripts/generate_data.py
 data/raw/*.csv
 warehouse.duckdb
+
+# dbt
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+dbt_project/.user.yml

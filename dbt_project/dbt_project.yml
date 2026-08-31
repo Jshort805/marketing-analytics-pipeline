@@ -1,0 +1,22 @@
+name: 'marketing_attribution'
+version: '1.0.0'
+config-version: 2
+
+profile: 'marketing_attribution'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+vars:
+  attribution_lookback_days: 30
+
+models:
+  marketing_attribution:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
