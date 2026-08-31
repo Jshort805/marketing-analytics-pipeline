@@ -1,0 +1,8 @@
+.venv/
+.airflow_venv/
+__pycache__/
+*.pyc
+
+# generated data — regenerate with scripts/generate_data.py
+data/raw/*.csv
+warehouse.duckdb
