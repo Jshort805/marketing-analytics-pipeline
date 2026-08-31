@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: dim_channels
+    description: One row per marketing channel (paid or organic), with its type and platform.
+    columns:
+      - name: channel
+        data_tests: [not_null, unique]
+
+  - name: dim_campaigns
+    description: One row per ad campaign, enriched with channel metadata.
+    columns:
+      - name: campaign_id
+        data_tests: [not_null, unique]
+
+  - name: fct_ad_spend
+    description: Grain -- one row per campaign per day. Ad platform performance (impressions, reported clicks, spend).
+    columns:
+      - name: campaign_id
+        data_tests: [not_null]
+      - name: spend
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fct_attribution_touchpoints
+    description: >
+      Grain -- one row per (order, touchpoint). Every touchpoint a customer
+      had before ordering, with credit weights and attributed revenue under
+      first-touch, last-touch, and linear multi-touch models.
+    columns:
+      - name: order_id
+        data_tests: [not_null]
+      - name: revenue
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+
+  - name: fct_orders
+    description: Grain -- one row per order, with the first- and last-touch channel and a dark-order flag for unattributed revenue.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: revenue
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
+
+  - name: fct_channel_performance
+    description: >
+      Grain -- one row per channel, totalled across the whole reporting
+      period. Spend, attributed revenue under all three models, ROAS, CAC,
+      CTR and CPC.
+    columns:
+      - name: channel
+        data_tests: [not_null, unique]

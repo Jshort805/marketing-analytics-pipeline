@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: stg_campaigns
+    description: One row per ad campaign, cleaned (trimmed names, standardized lowercase channel).
+    columns:
+      - name: campaign_id
+        data_tests: [not_null, unique]
+      - name: channel
+        data_tests:
+          - accepted_values:
+              values: ['google_search', 'meta_facebook', 'meta_instagram', 'tiktok_ads', 'display_network', 'affiliate']
+
+  - name: stg_ad_spend
+    description: One row per campaign per day of ad platform performance (impressions, reported clicks, spend).
+    columns:
+      - name: campaign_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('stg_campaigns')
+              field: campaign_id
+      - name: spend
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: stg_clicks
+    description: One row per marketing touchpoint (paid or organic).
+    columns:
+      - name: click_id
+        data_tests: [not_null, unique]
+      - name: user_id
+        data_tests: [not_null]
+
+  - name: stg_customers
+    description: One row per known customer/user.
+    columns:
+      - name: user_id
+        data_tests: [not_null, unique]
+
+  - name: stg_orders
+    description: One row per purchase, deduplicated on order_id.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: user_id
+        data_tests: [not_null]
+      - name: revenue
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: false
