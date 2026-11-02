@@ -1,0 +1,13 @@
+{
+  "decay": 0.8,
+  "alpha": 0.9,
+  "intercept": 1030.9271496151086,
+  "r2_in_sample": 0.2823021319058968,
+  "r2_cv": 0.26293268801804914,
+  "n_weeks": 104,
+  "week_start": "2024-11-04",
+  "week_end": "2026-10-26",
+  "bootstrap_reps": 300,
+  "baseline_floor": 0.4,
+  "ridge_k": 0.3
+}

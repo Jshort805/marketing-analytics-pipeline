@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-11-02 04:19 UTC",
+  "data_start": "2024-11-03",
+  "data_end": "2026-11-02",
+  "orders": 3782,
+  "customers": 1650,
+  "dbt_version": "1.12.6",
+  "table_rows": {
+    "main.channel_reference": 9,
+    "main.dim_campaigns": 17,
+    "main.dim_channels": 9,
+    "main.fct_ad_spend": 8346,
+    "main.fct_attribution_touchpoints": 6740,
+    "main.fct_channel_performance": 9,
+    "main.fct_orders": 3782,
+    "main.int_attribution_weights": 6740,
+    "main.int_order_touchpoints": 6740,
+    "main.stg_ad_spend": 8346,
+    "main.stg_campaigns": 17,
+    "main.stg_clicks": 18942,
+    "main.stg_customers": 9220,
+    "main.stg_orders": 3782,
+    "raw.ad_spend": 8346,
+    "raw.campaigns": 17,
+    "raw.clicks": 18942,
+    "raw.customers": 9220,
+    "raw.orders": 3801
+  }
+}
